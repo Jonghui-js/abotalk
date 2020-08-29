@@ -1,79 +1,46 @@
+import 'package:abotalk/redux/AppState.dart';
+import 'package:abotalk/redux/Reducer.dart';
 import 'package:abotalk/screens/Sign/SingInScreen.dart';
 import 'package:flutter/material.dart';
-import 'screens/Chat/ChatScreen.dart';
-import 'screens/Home/HomeScreen.dart';
-import 'screens/MyPage/MyPageScreen.dart';
-import 'screens/Post/PostScreen.dart';
-import 'package:line_awesome_icons/line_awesome_icons.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
+import 'screens/AboApp/AboTalkApp.dart';
+import 'services/user_preferences.dart';
 
-void main() {
-  runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await UserPreferences().init();
+  final _initialState = AppState(msg: '');
+
+  final Store<AppState> _store =
+      Store<AppState>(reducer, initialState: _initialState);
+  runApp(MyApp(store: _store));
 }
 
 class MyApp extends StatefulWidget {
+  final Store<AppState> store;
+  MyApp({this.store});
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  int _selectedIndex = 0;
-  void _onIndexTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  static List<Widget> _screenOptions = <Widget>[
-    HomeScreen(),
-    PostScreen(),
-    ChatScreen(),
-    MyPageScreen(),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    bool isAuth = false;
-
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: 'SongMyung',
-        primaryColor: Colors.white,
-      ),
-      home: isAuth
-          ? Scaffold(
-              body: IndexedStack(
-                index: _selectedIndex,
-                children: _screenOptions,
+    return StoreProvider(
+      store: widget.store,
+      child: StoreConnector<AppState, AppState>(
+          converter: (store) => store.state,
+          builder: (context, state) {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              theme: ThemeData(
+                fontFamily: 'SongMyung',
+                primaryColor: Colors.white,
               ),
-              bottomNavigationBar: BottomNavigationBar(
-                showUnselectedLabels: true,
-                currentIndex: _selectedIndex,
-                elevation: 0.0,
-                onTap: _onIndexTapped,
-                unselectedItemColor: Colors.black,
-                selectedItemColor: Colors.deepOrange,
-                items: [
-                  BottomNavigationBarItem(
-                    icon: Icon(LineAwesomeIcons.university),
-                    title: Text('home'),
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(LineAwesomeIcons.comments),
-                    title: Text('post'),
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(LineAwesomeIcons.user),
-                    title: Text('my Page'),
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(LineAwesomeIcons.cog),
-                    title: Text('setting'),
-                  ),
-                ],
-              ),
-            )
-          : SignInScreen(),
+              home: UserPreferences().checkAuth ? AboTalkApp() : SignInScreen(),
+            );
+          }),
     );
   }
 }
