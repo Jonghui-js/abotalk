@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class AppState {
   // bool isAuth;
   String msg;

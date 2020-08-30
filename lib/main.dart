@@ -1,10 +1,10 @@
 import 'package:abotalk/redux/AppState.dart';
 import 'package:abotalk/redux/Reducer.dart';
+import 'package:abotalk/screens/Home/HomeScreen.dart';
 import 'package:abotalk/screens/Sign/SingInScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
-import 'screens/AboApp/AboTalkApp.dart';
 import 'services/user_preferences.dart';
 
 void main() async {
@@ -35,10 +35,10 @@ class _MyAppState extends State<MyApp> {
             return MaterialApp(
               debugShowCheckedModeBanner: false,
               theme: ThemeData(
-                fontFamily: 'SongMyung',
+                fontFamily: 'DoHyeon',
                 primaryColor: Colors.white,
               ),
-              home: UserPreferences().checkAuth ? AboTalkApp() : SignInScreen(),
+              home: UserPreferences().checkAuth ? HomeScreen() : SignInScreen(),
             );
           }),
     );

@@ -20,4 +20,36 @@ class UserPreferences {
   set checkAuth(bool value) {
     _prefs.setBool('isAuth', value);
   }
+
+  get checkToken {
+    return _prefs.getString('token');
+  }
+
+  set checkToken(String token) {
+    _prefs.setString('token', token);
+  }
+
+  get userName {
+    return _prefs.getString('userName');
+  }
+
+  set userName(String username) {
+    _prefs.setString('userName', username);
+  }
+
+  get userType {
+    return _prefs.getString('userType');
+  }
+
+  set userType(String usertype) {
+    _prefs.setString('userType', usertype);
+  }
+
+  get userImgPath {
+    return _prefs.getString('userImgPath');
+  }
+
+  set userImgPath(String path) {
+    _prefs.setString('userImgPath', path);
+  }
 }

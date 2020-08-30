@@ -1,7 +1,7 @@
 import 'package:abotalk/network_handler.dart';
 import 'package:abotalk/redux/Actions.dart';
 import 'package:abotalk/redux/AppState.dart';
-import 'package:abotalk/screens/AboApp/AboTalkApp.dart';
+import 'package:abotalk/screens/Home/HomeScreen.dart';
 import 'package:abotalk/screens/Sign/SignUpScreen.dart';
 import 'package:abotalk/services/user_preferences.dart';
 import 'package:flutter/material.dart';
@@ -135,11 +135,22 @@ class _SignInScreenState extends State<SignInScreen> {
 
                                   if (res['success']) {
                                     UserPreferences().checkAuth = true;
+                                    UserPreferences().checkToken = res['token'];
+
+                                    var userdata =
+                                        await networkHandler.getMe('/auth/me');
+                                    UserPreferences().userType =
+                                        userdata['data']['blood'];
+                                    UserPreferences().userName =
+                                        userdata['data']['username'];
+                                    UserPreferences().userImgPath =
+                                        userdata['data']['img'];
+
                                     Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
                                         builder: (BuildContext context) {
-                                          return AboTalkApp();
+                                          return HomeScreen();
                                         },
                                       ),
                                     );

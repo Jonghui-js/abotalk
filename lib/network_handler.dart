@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:abotalk/services/user_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
@@ -37,6 +39,25 @@ class NetworkHandler {
       "Content-Type": 'application/json',
     });
 
+    return json.decode(res.body);
+  }
+
+  Future<dynamic> getMe(String url) async {
+    var token = UserPreferences().checkToken;
+    print(token);
+    url = formater(url);
+    print(url);
+    var res =
+        await http.get(url, headers: {HttpHeaders.authorizationHeader: token});
+
+    return json.decode(res.body);
+  }
+
+  Future<Map<String, dynamic>> getUsersType(String url) async {
+    var token = UserPreferences().checkToken;
+    url = formater(url);
+    var res =
+        await http.get(url, headers: {HttpHeaders.authorizationHeader: token});
     return json.decode(res.body);
   }
 }

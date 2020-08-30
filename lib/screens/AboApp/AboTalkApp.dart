@@ -1,10 +1,8 @@
-import 'package:abotalk/screens/Chat/ChatScreen.dart';
+/* import 'package:abotalk/screens/Chat/ChatScreen.dart';
 import 'package:abotalk/screens/Home/HomeScreen.dart';
 import 'package:abotalk/screens/MyPage/MyPageScreen.dart';
 import 'package:abotalk/screens/Post/PostScreen.dart';
 import 'package:flutter/material.dart';
-
-import 'package:line_awesome_icons/line_awesome_icons.dart';
 
 class AboTalkApp extends StatefulWidget {
   @override
@@ -29,7 +27,12 @@ class _AboTalkAppState extends State<AboTalkApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
+      body: HomeScreen(),
+    );
+  }
+}
+ */
+/*  body: IndexedStack(
         index: _selectedIndex,
         children: _screenOptions,
       ),
@@ -58,7 +61,4 @@ class _AboTalkAppState extends State<AboTalkApp> {
             title: Text('setting'),
           ),
         ],
-      ),
-    );
-  }
-}
+      ), */
