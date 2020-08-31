@@ -33,3 +33,10 @@ Color setUserColor(String userType) {
 
   return userColor;
 }
+
+List<Color> colorList = [
+  abColor, //ab
+  aColor, //a
+  bColor, //b
+  oColor, //o
+];

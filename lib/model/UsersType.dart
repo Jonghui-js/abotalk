@@ -6,12 +6,12 @@ class UsersType {
 
   UsersType({this.a, this.b, this.ab, this.o});
 
-  factory UsersType.fromJson(Map<String, dynamic> parsedJson) {
+  factory UsersType.fromJson(Map<String, dynamic> data) {
     return UsersType(
-      a: parsedJson['a'],
-      b: parsedJson['b'],
-      ab: parsedJson['ab'],
-      o: parsedJson['o'],
+      a: data['a'],
+      b: data['b'],
+      ab: data['ab'],
+      o: data['o'],
     );
   }
 }

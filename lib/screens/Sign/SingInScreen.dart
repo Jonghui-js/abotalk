@@ -1,4 +1,4 @@
-import 'package:abotalk/network_handler.dart';
+import 'package:abotalk/services/network_handler.dart';
 import 'package:abotalk/redux/Actions.dart';
 import 'package:abotalk/redux/AppState.dart';
 import 'package:abotalk/screens/Home/HomeScreen.dart';
@@ -25,22 +25,22 @@ class _SignInScreenState extends State<SignInScreen> {
       converter: (store) => store.state,
       builder: (context, state) {
         return Scaffold(
-          resizeToAvoidBottomInset: false,
+          // resizeToAvoidBottomInset: true,
           backgroundColor: Colors.white,
-          body: Column(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.only(left: 20, bottom: 20),
-                alignment: Alignment.bottomLeft,
-                height: 250,
-                child: Text(
-                  'ABO+\nTALK',
-                  style: TextStyle(fontSize: 50, fontFamily: 'BlackHanSans'),
+          body: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.only(left: 20, bottom: 20),
+                  alignment: Alignment.bottomLeft,
+                  height: 250,
+                  child: Text(
+                    'ABO+\nTALK',
+                    style: TextStyle(fontSize: 50, fontFamily: 'BlackHanSans'),
+                  ),
+                  decoration: BoxDecoration(color: Colors.orange),
                 ),
-                decoration: BoxDecoration(color: Colors.orange),
-              ),
-              Expanded(
-                child: Padding(
+                Padding(
                   padding: const EdgeInsets.all(30.0),
                   child: Form(
                     key: _globalKey,
@@ -143,8 +143,6 @@ class _SignInScreenState extends State<SignInScreen> {
                                         userdata['data']['blood'];
                                     UserPreferences().userName =
                                         userdata['data']['username'];
-                                    UserPreferences().userImgPath =
-                                        userdata['data']['img'];
 
                                     Navigator.pushReplacement(
                                       context,
@@ -214,8 +212,8 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

@@ -1,16 +1,20 @@
+import 'package:abotalk/model/Post.dart';
+
 class AppState {
   // bool isAuth;
   String msg;
-  //dynamic userInfo;
+  Post currentPost;
 
-  AppState({
-    //  @required this.isAuth,
-    this.msg,
-  });
+  AppState(
+      {
+      //  @required this.isAuth,
+      this.msg,
+      this.currentPost});
 
   AppState.fromAppState(AppState another) {
     //  isAuth = another.isAuth;
     msg = another.msg;
+    currentPost = another.currentPost;
   }
 
   //String get currentContent => currentChallenge;

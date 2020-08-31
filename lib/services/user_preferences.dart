@@ -44,12 +44,4 @@ class UserPreferences {
   set userType(String usertype) {
     _prefs.setString('userType', usertype);
   }
-
-  get userImgPath {
-    return _prefs.getString('userImgPath');
-  }
-
-  set userImgPath(String path) {
-    _prefs.setString('userImgPath', path);
-  }
 }

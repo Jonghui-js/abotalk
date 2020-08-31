@@ -8,6 +8,8 @@ AppState reducer(AppState prevState, dynamic action) {
     //newState.isAuth = action.payload;
   } else if (action is CheckMsg) {
     newState.msg = action.msg;
+  } else if (action is SetCurrentPost) {
+    newState.currentPost = action.currentPost;
   }
   return newState;
 }

@@ -1,12 +1,15 @@
+import 'package:abotalk/model/Post.dart';
 import 'package:abotalk/model/UsersType.dart';
-import 'package:abotalk/network_handler.dart';
+import 'package:abotalk/services/network_handler.dart';
+import 'package:abotalk/screens/CreatePost/CreatePollScreen.dart';
 import 'package:abotalk/share/color.dart';
 import 'package:pie_chart/pie_chart.dart';
-import 'package:abotalk/screens/MyPage/MyPageScreen.dart';
 import 'package:abotalk/services/user_preferences.dart';
 import 'package:flutter/material.dart';
-
-import 'package:line_awesome_icons/line_awesome_icons.dart';
+import 'local_widget/HomeAppBAr.dart';
+import 'local_widget/PostList.dart';
+import 'local_widget/PostTile.dart';
+import 'local_widget/PostListAppBar.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -14,22 +17,36 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool circular = true;
+  FullScreenDialog _myDialog = new FullScreenDialog();
   NetworkHandler networkHandler = NetworkHandler();
+  Map<String, double> usersTypeMap = Map();
+  List<Post> postsList = [];
+  bool pieChartCircular = true;
+  bool postsCircular = true;
   String username = '';
   String userType = '';
-  String userImgPath = '';
-  Map<String, double> dataMap = new Map();
-  List<Color> colorList = [
-    abColor, //ab
-    aColor, //a
-    bColor, //b
-    oColor, //o
-  ];
 
-  _loadMainContent() async {
-    var res = await networkHandler.getUsersType('/main');
-    return res;
+  Future<Null> _loadPieChart() async {
+    final data = await networkHandler.getUsersType('/main');
+    UsersType usersType = new UsersType.fromJson(data);
+    setState(() {
+      usersTypeMap['AB'] = double.parse(usersType.ab);
+      usersTypeMap['A'] = double.parse(usersType.a);
+      usersTypeMap['B'] = double.parse(usersType.b);
+      usersTypeMap['O'] = double.parse(usersType.o);
+      pieChartCircular = false;
+    });
+  }
+
+  Future<Null> _loadPosts() async {
+    postsList = [];
+    final data = await networkHandler.getPosts('/posts');
+    setState(() {
+      for (Map i in data) {
+        postsList.add(Post.fromJson(i));
+      }
+      postsCircular = false;
+    });
   }
 
   @override
@@ -37,128 +54,60 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     username = UserPreferences().userName;
     userType = UserPreferences().userType;
-    userImgPath = UserPreferences().userImgPath;
-    _loadMainContent().then((result) {
-      UsersType usersType = new UsersType.fromJson(result);
-
-      setState(() {
-        dataMap['AB'] = double.parse(usersType.ab);
-        dataMap['A'] = double.parse(usersType.a);
-        dataMap['B'] = double.parse(usersType.b);
-        dataMap['O'] = double.parse(usersType.o);
-        circular = false;
-      });
-    });
+    _loadPieChart();
+    _loadPosts();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                      color: setUserColor(userType),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Container(
-                    padding: EdgeInsets.all(4),
-                    child: Text(
-                      userType.toUpperCase(),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  username,
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                IconButton(
-                  icon: Icon(LineAwesomeIcons.user),
-                  onPressed: () {},
-                )
-              ],
-            )
-          ],
-        ),
+        automaticallyImplyLeading: false,
+        title: HomeAppBar(userType: userType, username: username),
         elevation: 1.0,
       ),
-      body: CustomScrollView(
-        slivers: [
-          //파이차트 구현하기
-          SliverAppBar(
-            expandedHeight: 180,
-            collapsedHeight: 120,
-            backgroundColor: Colors.grey[100],
-            flexibleSpace: Container(
-              height: 180,
-              alignment: Alignment.bottomCenter,
-              child: circular
-                  ? CircularProgressIndicator()
-                  : Center(
-                      child: PieChart(
-                        colorList: colorList,
-                        dataMap: dataMap,
-                        animationDuration: Duration(milliseconds: 800),
-                        chartLegendSpacing: 32.0,
-                        chartRadius: MediaQuery.of(context).size.width / 2.7,
+      body: RefreshIndicator(
+        displacement: 180.0,
+        color: Colors.orange,
+        onRefresh: () async {
+          await _loadPosts();
+        },
+        child: CustomScrollView(
+          slivers: [
+            //파이차트 구현하기
+            SliverAppBar(
+              automaticallyImplyLeading: false,
+              expandedHeight: 180,
+              collapsedHeight: 120,
+              backgroundColor: Colors.grey[100],
+              flexibleSpace: Container(
+                height: 180,
+                alignment: Alignment.bottomCenter,
+                child: pieChartCircular
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          backgroundColor: Colors.white,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.orange),
+                        ),
+                      )
+                    : Center(
+                        child: PieChart(
+                          colorList: colorList,
+                          dataMap: usersTypeMap,
+                          animationDuration: Duration(milliseconds: 800),
+                          chartLegendSpacing: 32.0,
+                          chartRadius: MediaQuery.of(context).size.width / 2.7,
+                        ),
                       ),
-                    ),
+              ),
+              floating: false,
             ),
-            floating: false,
-          ),
-
-          SliverAppBar(
-            pinned: true,
-            backgroundColor: Colors.white,
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'ABO vs ABO',
-                  style: TextStyle(fontWeight: FontWeight.w800),
-                ),
-                Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(LineAwesomeIcons.plus),
-                      onPressed: () {
-                        UserPreferences().checkAuth = false;
-                        UserPreferences().checkToken = '';
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(LineAwesomeIcons.filter),
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          SliverAnimatedList(
-            itemBuilder: (_, index, ___) {
-              return ListTile(
-                title: Text(index.toString()),
-              );
-            },
-            initialItemCount: 20,
-          )
-        ],
+            PostListAppBar(myDialog: _myDialog),
+            PostList(postsList: postsList)
+          ],
+        ),
       ),
     );
   }
