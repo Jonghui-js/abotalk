@@ -1,6 +1,7 @@
 import 'package:abotalk/model/Post.dart';
 import 'package:abotalk/screens/Home/local_widget/PostList.dart';
 import 'package:abotalk/services/network_handler.dart';
+import 'package:abotalk/services/user_preferences.dart';
 import 'package:flutter/material.dart';
 
 class MyPostsScreen extends StatefulWidget {
@@ -12,14 +13,12 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
   NetworkHandler networkHandler = NetworkHandler();
   List<Post> postsList = [];
   bool circular = false;
-
+  String username = UserPreferences().userName;
   Future<Null> _loadMyPosts() async {
-    setState(() {
-      postsList = [];
-      circular = !circular;
-    });
+    postsList = [];
+    circular = !circular;
 
-    final data = await networkHandler.getMyPosts('/posts/me');
+    final data = await networkHandler.getMyPosts('/posts/myposts/me');
 
     setState(() {
       for (Map i in data) {
@@ -27,6 +26,12 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
       }
       circular = !circular;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMyPosts();
   }
 
   @override

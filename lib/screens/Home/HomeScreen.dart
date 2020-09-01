@@ -8,7 +8,6 @@ import 'package:abotalk/services/user_preferences.dart';
 import 'package:flutter/material.dart';
 import 'local_widget/HomeAppBAr.dart';
 import 'local_widget/PostList.dart';
-import 'local_widget/PostTile.dart';
 import 'local_widget/PostListAppBar.dart';
 
 class HomeScreen extends StatefulWidget {

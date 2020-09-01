@@ -3,6 +3,7 @@ import 'package:abotalk/model/Post.dart';
 class AppState {
   // bool isAuth;
   String msg;
+
   Post currentPost;
 
   AppState(

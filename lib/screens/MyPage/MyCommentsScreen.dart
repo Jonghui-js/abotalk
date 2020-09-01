@@ -1,5 +1,5 @@
-import 'package:abotalk/model/Post.dart';
-import 'package:abotalk/screens/Home/local_widget/PostList.dart';
+import 'package:abotalk/model/Comment.dart';
+import 'package:abotalk/screens/Post/local_widget/CommentList.dart';
 import 'package:abotalk/services/network_handler.dart';
 import 'package:flutter/material.dart';
 
@@ -10,23 +10,28 @@ class MyCommentsScreen extends StatefulWidget {
 
 class _MyCommentsScreenState extends State<MyCommentsScreen> {
   NetworkHandler networkHandler = NetworkHandler();
-  List<Post> postsList = [];
+  List<Comment> commentsList = [];
   bool circular = false;
 
-  Future<Null> _loadMyPosts() async {
-    setState(() {
-      postsList = [];
-      circular = !circular;
-    });
+  Future<Null> _loadMyComments() async {
+    commentsList = [];
+    circular = !circular;
 
-    final data = await networkHandler.getMyPosts('/posts/me');
+    final data = await networkHandler.getMyComments('/posts/mycomments/me');
 
     setState(() {
       for (Map i in data) {
-        postsList.add(Post.fromJson(i));
+        commentsList.add(Comment.fromJson(i));
       }
+      print(commentsList);
       circular = !circular;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMyComments();
   }
 
   @override
@@ -35,11 +40,11 @@ class _MyCommentsScreenState extends State<MyCommentsScreen> {
       // displacement: 180.0,
       color: Colors.orange,
       onRefresh: () async {
-        await _loadMyPosts();
+        await _loadMyComments();
       },
       child: !circular
           ? CustomScrollView(
-              slivers: [PostList(postsList: postsList)],
+              slivers: [CommentList(comments: commentsList)],
             )
           : Center(
               child: CircularProgressIndicator(

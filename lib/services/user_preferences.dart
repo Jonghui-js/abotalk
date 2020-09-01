@@ -44,4 +44,12 @@ class UserPreferences {
   set userType(String usertype) {
     _prefs.setString('userType', usertype);
   }
+
+  get currentPostId {
+    return _prefs.getString('currentPostId');
+  }
+
+  set currentPostId(String id) {
+    _prefs.setString('currentPostID', id);
+  }
 }

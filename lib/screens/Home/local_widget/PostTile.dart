@@ -1,3 +1,4 @@
+import 'package:abotalk/model/Comment.dart';
 import 'package:abotalk/model/Post.dart';
 import 'package:abotalk/redux/Actions.dart';
 import 'package:abotalk/redux/AppState.dart';
@@ -13,8 +14,15 @@ class PostTile extends StatelessWidget {
   String content;
   String username;
   String usertype;
+  List<Comment> comments;
 
-  PostTile({this.id, this.title, this.content, this.username, this.usertype});
+  PostTile(
+      {this.id,
+      this.title,
+      this.content,
+      this.username,
+      this.usertype,
+      this.comments});
   @override
   Widget build(BuildContext context) {
     Post currentPost = Post(
@@ -22,28 +30,8 @@ class PostTile extends StatelessWidget {
         title: title,
         username: username,
         content: content,
-        usertype: usertype);
-    /*  void _showBottomSheet() {
-      showModalBottomSheet(
-          context: context,
-          builder: (context) {
-            return SingleChildScrollView(
-              child: Container(
-                height: 700,
-                child: Column(
-                  children: [
-                    Container(
-                      child: Text('pie chart'),
-                    ),
-                    Container(
-                      child: Text('pie chart'),
-                    )
-                  ],
-                ),
-              ),
-            );
-          });
-    } */
+        usertype: usertype,
+        comments: comments);
 
     return StoreConnector<AppState, AppState>(
         converter: (store) => store.state,

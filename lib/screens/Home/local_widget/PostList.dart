@@ -17,11 +17,13 @@ class PostList extends StatelessWidget {
         (context, index) {
           var data = postsList[index];
           return PostTile(
-              id: data.id,
-              title: data.title,
-              content: data.content,
-              username: data.username,
-              usertype: data.usertype);
+            id: data.id,
+            title: data.title,
+            content: data.content,
+            username: data.username,
+            usertype: data.usertype,
+            comments: data.comments,
+          );
         },
         childCount: postsList.length,
       ),

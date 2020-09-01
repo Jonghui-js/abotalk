@@ -1,4 +1,3 @@
-import 'package:abotalk/model/Post.dart';
 import 'package:abotalk/screens/MyPage/MyCommentsScreen.dart';
 import 'package:abotalk/screens/MyPage/MyPostsScreen.dart';
 import 'package:abotalk/screens/MyPage/MySettingsScreen.dart';
