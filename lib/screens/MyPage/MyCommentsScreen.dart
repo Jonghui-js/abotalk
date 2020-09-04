@@ -1,6 +1,6 @@
 import 'package:abotalk/model/Comment.dart';
 import 'package:abotalk/screens/Post/local_widget/CommentList.dart';
-import 'package:abotalk/services/network_handler.dart';
+import 'package:abotalk/services/network_handler/post.dart';
 import 'package:flutter/material.dart';
 
 class MyCommentsScreen extends StatefulWidget {
@@ -9,7 +9,7 @@ class MyCommentsScreen extends StatefulWidget {
 }
 
 class _MyCommentsScreenState extends State<MyCommentsScreen> {
-  NetworkHandler networkHandler = NetworkHandler();
+  PostNetworkHandler postNetworkHandler = PostNetworkHandler();
   List<Comment> commentsList = [];
   bool circular = false;
 
@@ -17,7 +17,7 @@ class _MyCommentsScreenState extends State<MyCommentsScreen> {
     commentsList = [];
     circular = !circular;
 
-    final data = await networkHandler.getMyComments('/posts/mycomments/me');
+    final data = await postNetworkHandler.getMyComments('/posts/mycomments/me');
 
     setState(() {
       for (Map i in data) {

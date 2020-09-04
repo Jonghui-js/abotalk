@@ -3,9 +3,9 @@ import 'package:abotalk/redux/Actions.dart';
 import 'package:abotalk/redux/AppState.dart';
 import 'package:abotalk/screens/Home/HomeScreen.dart';
 import 'package:abotalk/screens/Post/local_widget/CommentList.dart';
-import 'package:abotalk/services/network_handler.dart';
+import 'package:abotalk/services/network_handler/post.dart';
 import 'package:abotalk/services/user_preferences.dart';
-import 'package:abotalk/share/color.dart';
+import 'package:abotalk/share/UserTag.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
@@ -18,7 +18,7 @@ class PostScreen extends StatefulWidget {
 
 class _PostScreenState extends State<PostScreen> {
   final _globalKey = GlobalKey<FormState>();
-  NetworkHandler networkHandler = NetworkHandler();
+  PostNetworkHandler postNetworkHandler = PostNetworkHandler();
   TextEditingController _titleController = new TextEditingController();
   TextEditingController _contentController = new TextEditingController();
   TextEditingController _commentController = new TextEditingController();
@@ -32,7 +32,7 @@ class _PostScreenState extends State<PostScreen> {
   String usertype = '';
   String username = '';
 
-  void _showDialogPost() {
+  void _showPostRemoveDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -61,8 +61,8 @@ class _PostScreenState extends State<PostScreen> {
                 ),
               ),
               onPressed: () async {
-                var res = await networkHandler.deletePost(
-                  '/posts/${post.id}',
+                var res = await postNetworkHandler.deletePost(
+                  '/posts/$postId',
                 );
                 print(res);
 
@@ -90,7 +90,7 @@ class _PostScreenState extends State<PostScreen> {
     );
   }
 
-  void _showDialogComment() async {
+  void _showCreateCommentDialog() async {
     await showDialog<String>(
       context: context,
       child: AlertDialog(
@@ -138,7 +138,7 @@ class _PostScreenState extends State<PostScreen> {
               onPressed: () async {
                 Map<String, String> data = {"text": _commentController.text};
 
-                var res = await networkHandler.createComment(
+                var res = await postNetworkHandler.createComment(
                     '/posts/comments/$postId', data);
                 print(res);
                 print('gg');
@@ -164,7 +164,7 @@ class _PostScreenState extends State<PostScreen> {
       circular = true;
       postList = [];
     });
-    var data = await networkHandler.getPost('/posts/$postId');
+    var data = await postNetworkHandler.getPost('/posts/$postId');
     print(data);
 
     setState(() {
@@ -178,8 +178,6 @@ class _PostScreenState extends State<PostScreen> {
   @override
   void initState() {
     super.initState();
-    //  _loadComments();
-    //  _loadPost();
   }
 
   @override
@@ -190,9 +188,8 @@ class _PostScreenState extends State<PostScreen> {
           _contentController.text = state.currentPost.content;
           _titleController.text = state.currentPost.title;
           postId = state.currentPost.id;
-          //  usertype = state.currentPost.usertype;
-          // username = state.currentPost.username;
           return Scaffold(
+            backgroundColor: Colors.grey.shade100,
             appBar: AppBar(
               elevation: 1.0,
               actions: UserPreferences().userName == state.currentPost.username
@@ -213,36 +210,20 @@ class _PostScreenState extends State<PostScreen> {
                           color: Colors.red,
                         ),
                         onPressed: () {
-                          _showDialogPost();
+                          _showPostRemoveDialog();
                         },
                       )
                     ]
                   : null,
               title: Row(
                 children: [
-                  DecoratedBox(
-                    decoration: BoxDecoration(
-                        color: setUserColor(state.currentPost.usertype),
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Container(
-                      padding: EdgeInsets.all(4),
-                      child: Text(
-                        state.currentPost.usertype,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+                  UserTypeTag(
+                    userType: state.currentPost.usertype,
                   ),
                   SizedBox(
                     width: 10,
                   ),
-                  Text(
-                    state.currentPost.username,
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
+                  UserNameTag(userName: state.currentPost.username)
                 ],
               ),
             ),
@@ -368,7 +349,8 @@ class _PostScreenState extends State<PostScreen> {
                                                             _contentController
                                                                 .text
                                                       };
-                                                      var res = await networkHandler
+
+                                                      await postNetworkHandler
                                                           .updatePost(
                                                               '/posts/${post.id}',
                                                               data);
@@ -409,7 +391,7 @@ class _PostScreenState extends State<PostScreen> {
                       SliverAppBar(
                         automaticallyImplyLeading: false,
                         pinned: true,
-                        backgroundColor: Colors.grey[200],
+                        backgroundColor: Colors.orange,
                         title: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -418,13 +400,7 @@ class _PostScreenState extends State<PostScreen> {
                                 IconButton(
                                   icon: Icon(LineAwesomeIcons.plus),
                                   onPressed: () {
-                                    _showDialogComment();
-                                    /*   Navigator.push(
-                      context,
-                      new MaterialPageRoute(
-                        builder: (BuildContext context) => myDialog,
-                        fullscreenDialog: true,
-                      )); */
+                                    _showCreateCommentDialog();
                                   },
                                 ),
                               ],

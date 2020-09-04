@@ -1,6 +1,6 @@
 import 'package:abotalk/model/Post.dart';
 import 'package:abotalk/screens/Home/local_widget/PostList.dart';
-import 'package:abotalk/services/network_handler.dart';
+import 'package:abotalk/services/network_handler/post.dart';
 import 'package:abotalk/services/user_preferences.dart';
 import 'package:flutter/material.dart';
 
@@ -10,16 +10,18 @@ class MyPostsScreen extends StatefulWidget {
 }
 
 class _MyPostsScreenState extends State<MyPostsScreen> {
-  NetworkHandler networkHandler = NetworkHandler();
+  PostNetworkHandler postNetworkHandler = PostNetworkHandler();
   List<Post> postsList = [];
   bool circular = false;
   String username = UserPreferences().userName;
+
+  /// Load My App Posts
+  ///
+  ///
   Future<Null> _loadMyPosts() async {
     postsList = [];
     circular = !circular;
-
-    final data = await networkHandler.getMyPosts('/posts/myposts/me');
-
+    final data = await postNetworkHandler.getMyPosts('/posts/myposts/me');
     setState(() {
       for (Map i in data) {
         postsList.add(Post.fromJson(i));
@@ -44,7 +46,11 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
       },
       child: !circular
           ? CustomScrollView(
-              slivers: [PostList(postsList: postsList)],
+              slivers: [
+                PostList(
+                  postsList: postsList,
+                )
+              ],
             )
           : Center(
               child: CircularProgressIndicator(

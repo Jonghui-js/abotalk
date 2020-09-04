@@ -1,12 +1,14 @@
 import 'package:abotalk/model/Post.dart';
 import 'package:abotalk/model/UsersType.dart';
-import 'package:abotalk/services/network_handler.dart';
 import 'package:abotalk/screens/CreatePost/CreatePollScreen.dart';
+import 'package:abotalk/screens/Home/local_widget/HomeAppBar.dart';
+import 'package:abotalk/services/network_handler/auth.dart';
+import 'package:abotalk/services/network_handler/post.dart';
 import 'package:abotalk/share/color.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:abotalk/services/user_preferences.dart';
 import 'package:flutter/material.dart';
-import 'local_widget/HomeAppBAr.dart';
+import 'local_widget/HomeAppBar.dart';
 import 'local_widget/PostList.dart';
 import 'local_widget/PostListAppBar.dart';
 
@@ -16,43 +18,58 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  FullScreenDialog _myDialog = new FullScreenDialog();
-  NetworkHandler networkHandler = NetworkHandler();
+  ScrollController controller = ScrollController();
+  CreatePostDialog createPostDialog = CreatePostDialog();
+  AuthNetworkHandler authNetworkHandler = AuthNetworkHandler();
+  PostNetworkHandler postNetworkHandler = PostNetworkHandler();
   Map<String, double> usersTypeMap = Map();
   List<Post> postsList = [];
-  bool pieChartCircular = true;
-  bool postsCircular = true;
-  String username = '';
-  String userType = '';
+  bool pieChartCircular = false;
+  String username = UserPreferences().userName;
+  String userType = UserPreferences().userType;
+
+  /// Load Users Blood Type
+  /// For Pie Chart
+  ///
 
   Future<Null> _loadPieChart() async {
-    final data = await networkHandler.getUsersType('/main');
+    setState(() {
+      pieChartCircular = !pieChartCircular;
+    });
+    final data = await authNetworkHandler.getUsersType('/main');
     UsersType usersType = new UsersType.fromJson(data);
     setState(() {
-      usersTypeMap['AB'] = double.parse(usersType.ab);
-      usersTypeMap['A'] = double.parse(usersType.a);
-      usersTypeMap['B'] = double.parse(usersType.b);
-      usersTypeMap['O'] = double.parse(usersType.o);
-      pieChartCircular = false;
+      usersTypeMap['ab'] = usersType.ab;
+      usersTypeMap['a'] = usersType.a;
+      usersTypeMap['b'] = usersType.b;
+      usersTypeMap['o'] = usersType.o;
+      pieChartCircular = !pieChartCircular;
     });
   }
 
+  /// Load All Posts
+  ///
+
   Future<Null> _loadPosts() async {
-    postsList = [];
-    final data = await networkHandler.getPosts('/posts');
+    final data = await postNetworkHandler.getPosts('/posts');
     setState(() {
-      for (Map i in data) {
-        postsList.add(Post.fromJson(i));
+      for (Map post in data) {
+        postsList.add(Post.fromJson(post));
       }
-      postsCircular = false;
     });
+  }
+
+  void goToTop() {
+    controller.animateTo(0,
+        duration: Duration(
+          milliseconds: 400,
+        ),
+        curve: Curves.easeInOut);
   }
 
   @override
   void initState() {
     super.initState();
-    username = UserPreferences().userName;
-    userType = UserPreferences().userType;
     _loadPieChart();
     _loadPosts();
   }
@@ -63,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: HomeAppBar(userType: userType, username: username),
+        title: HomeAppBar(),
         elevation: 1.0,
       ),
       body: RefreshIndicator(
@@ -73,6 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
           await _loadPosts();
         },
         child: CustomScrollView(
+          controller: controller,
           slivers: [
             //파이차트 구현하기
             SliverAppBar(
@@ -103,8 +121,13 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               floating: false,
             ),
-            PostListAppBar(myDialog: _myDialog),
-            PostList(postsList: postsList)
+            PostListAppBar(
+              createPostDialog: createPostDialog,
+              goToTop: goToTop,
+            ),
+            PostList(
+              postsList: postsList,
+            )
           ],
         ),
       ),

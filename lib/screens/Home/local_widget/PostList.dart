@@ -1,14 +1,14 @@
 import 'package:abotalk/model/Post.dart';
-import 'package:abotalk/screens/Home/local_widget/PostTile.dart';
+import 'package:abotalk/share/PostTile.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class PostList extends StatelessWidget {
-  const PostList({
-    Key key,
-    @required this.postsList,
-  }) : super(key: key);
+  List<Post> postsList;
 
-  final List<Post> postsList;
+  PostList({
+    this.postsList,
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -1,11 +1,12 @@
-import 'package:abotalk/services/network_handler.dart';
-import 'package:abotalk/redux/Actions.dart';
-import 'package:abotalk/redux/AppState.dart';
-import 'package:abotalk/screens/Home/HomeScreen.dart';
+import 'package:abotalk/screens/Sign/local_widget/AboTalkBanner.dart';
+import 'package:abotalk/services/network_handler/auth.dart';
 import 'package:abotalk/screens/Sign/SignUpScreen.dart';
 import 'package:abotalk/services/user_preferences.dart';
-import 'package:flutter/material.dart';
+import 'package:abotalk/screens/Home/HomeScreen.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:abotalk/redux/Actions.dart';
+import 'package:abotalk/redux/AppState.dart';
+import 'package:flutter/material.dart';
 
 class SignInScreen extends StatefulWidget {
   @override
@@ -13,33 +14,24 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  NetworkHandler networkHandler = NetworkHandler();
-  final _globalKey = GlobalKey<FormState>();
+  AuthNetworkHandler authNetworkHandler = AuthNetworkHandler();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  final _globalKey = GlobalKey<FormState>();
   String errorMsg = '';
   bool circular = false;
+
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, AppState>(
       converter: (store) => store.state,
       builder: (context, state) {
         return Scaffold(
-          // resizeToAvoidBottomInset: true,
           backgroundColor: Colors.white,
           body: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                Container(
-                  padding: EdgeInsets.only(left: 20, bottom: 20),
-                  alignment: Alignment.bottomLeft,
-                  height: 250,
-                  child: Text(
-                    'ABO+\nTALK',
-                    style: TextStyle(fontSize: 50, fontFamily: 'BlackHanSans'),
-                  ),
-                  decoration: BoxDecoration(color: Colors.orange),
-                ),
+                AboTalkBanner(),
                 Padding(
                   padding: const EdgeInsets.all(30.0),
                   child: Form(
@@ -49,11 +41,13 @@ class _SignInScreenState extends State<SignInScreen> {
                       children: [
                         Row(
                           children: [
-                            Text(state.msg,
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                )),
+                            Text(
+                              state.msg,
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ],
                           mainAxisAlignment: MainAxisAlignment.center,
                         ),
@@ -80,7 +74,6 @@ class _SignInScreenState extends State<SignInScreen> {
                                         if (value.isEmpty) return '이메일을 입력해주세요';
                                         if (!emailValid)
                                           return '유효한 이메일 형식이 아닙니다.';
-
                                         return null;
                                       },
                                     )))
@@ -130,15 +123,14 @@ class _SignInScreenState extends State<SignInScreen> {
                                     "password": _passwordController.text
                                   };
 
-                                  var res = await networkHandler.login(
+                                  var res = await authNetworkHandler.login(
                                       '/auth/login', data);
 
                                   if (res['success']) {
                                     UserPreferences().checkAuth = true;
                                     UserPreferences().checkToken = res['token'];
-
-                                    var userdata =
-                                        await networkHandler.getMe('/auth/me');
+                                    var userdata = await authNetworkHandler
+                                        .getMe('/auth/me');
                                     UserPreferences().userType =
                                         userdata['data']['blood'];
                                     UserPreferences().userName =
@@ -156,7 +148,6 @@ class _SignInScreenState extends State<SignInScreen> {
                                     setState(() {
                                       StoreProvider.of<AppState>(context)
                                           .dispatch(CheckMsg(res['error']));
-                                      // errorMsg = res['error'];
                                       circular = false;
                                     });
                                   }

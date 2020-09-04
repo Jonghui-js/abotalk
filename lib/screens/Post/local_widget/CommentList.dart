@@ -1,5 +1,5 @@
 import 'package:abotalk/model/Comment.dart';
-import 'package:abotalk/screens/Post/local_widget/CommnetTile.dart';
+import 'package:abotalk/share/CommnetTile.dart';
 import 'package:flutter/material.dart';
 
 class CommentList extends StatelessWidget {

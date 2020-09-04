@@ -30,7 +30,6 @@ Color setUserColor(String userType) {
       }
       break;
   }
-
   return userColor;
 }
 
@@ -40,3 +39,5 @@ List<Color> colorList = [
   bColor, //b
   oColor, //o
 ];
+
+List<String> bloodTypeList = ['a', 'b', 'ab', 'o'];

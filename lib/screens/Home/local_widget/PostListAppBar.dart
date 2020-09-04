@@ -4,34 +4,41 @@ import 'package:line_awesome_icons/line_awesome_icons.dart';
 
 // ignore: must_be_immutable
 class PostListAppBar extends StatelessWidget {
-  FullScreenDialog myDialog;
-
-  PostListAppBar({this.myDialog});
+  CreatePostDialog createPostDialog;
+  Function goToTop;
+  PostListAppBar({this.createPostDialog, this.goToTop});
 
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
       automaticallyImplyLeading: false,
       pinned: true,
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.orange,
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'ABO vs ABO',
-            style: TextStyle(fontWeight: FontWeight.w800),
+            'ABO talk',
+            style: const TextStyle(fontWeight: FontWeight.w800),
           ),
           Row(
             children: [
               IconButton(
-                icon: Icon(LineAwesomeIcons.plus),
+                icon: const Icon(LineAwesomeIcons.arrow_up),
+                onPressed: () async {
+                  goToTop();
+                },
+              ),
+              IconButton(
+                icon: const Icon(LineAwesomeIcons.plus),
                 onPressed: () {
                   Navigator.push(
-                      context,
-                      new MaterialPageRoute(
-                        builder: (BuildContext context) => myDialog,
-                        fullscreenDialog: true,
-                      ));
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => createPostDialog,
+                      fullscreenDialog: true,
+                    ),
+                  );
                 },
               ),
             ],

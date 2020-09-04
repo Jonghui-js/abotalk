@@ -1,9 +1,11 @@
-import 'package:abotalk/services/network_handler.dart';
-import 'package:abotalk/redux/Actions.dart';
-import 'package:abotalk/redux/AppState.dart';
+import 'package:abotalk/screens/Sign/local_widget/AboTalkBanner.dart';
+import 'package:abotalk/services/network_handler/auth.dart';
 import 'package:abotalk/screens/Sign/SingInScreen.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:abotalk/redux/AppState.dart';
+import 'package:abotalk/redux/Actions.dart';
+import 'package:abotalk/share/color.dart';
+import 'package:flutter/material.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -11,17 +13,16 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  NetworkHandler networkHandler = NetworkHandler();
+  AuthNetworkHandler authNetworkHandler = AuthNetworkHandler();
   final _globalKey = GlobalKey<FormState>();
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _password1Controller = TextEditingController();
   TextEditingController _password2Controller = TextEditingController();
-
-  var selectedType;
+  String selectedType;
   String errorMsg = '';
   bool circular = false;
-  List<String> bloodTypeList = ['a', 'b', 'ab', 'o'];
+
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, AppState>(
@@ -32,17 +33,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             body: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.only(left: 20, bottom: 20),
-                    alignment: Alignment.bottomLeft,
-                    height: 250,
-                    child: Text(
-                      'ABO+\nTALK',
-                      style:
-                          TextStyle(fontSize: 50, fontFamily: 'BlackHanSans'),
-                    ),
-                    decoration: BoxDecoration(color: Colors.orange),
-                  ),
+                  AboTalkBanner(),
                   Padding(
                     padding: const EdgeInsets.all(30.0),
                     child: Form(
@@ -75,7 +66,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       child: TextFormField(
                                         controller: _usernameController,
                                         decoration: InputDecoration(
-                                          hintText: 'Username',
+                                          hintText: '10자 이내로 입력하세요',
                                         ),
                                       )))
                             ],
@@ -206,7 +197,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       "password": _password1Controller.text
                                     };
 
-                                    var res = await networkHandler.register(
+                                    var res = await authNetworkHandler.register(
                                         '/auth/register', data);
 
                                     if (res['success']) {
@@ -231,8 +222,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 },
                                 color: Colors.orange[700],
                                 child: circular
-                                    ? CircularProgressIndicator(
-                                        backgroundColor: Colors.orange[700],
+                                    ? const CircularProgressIndicator(
+                                        backgroundColor: Colors.orange,
                                         valueColor:
                                             AlwaysStoppedAnimation<Color>(
                                                 Colors.black),

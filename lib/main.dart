@@ -11,7 +11,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await UserPreferences().init();
   final _initialState = AppState(msg: '');
-
   final Store<AppState> _store =
       Store<AppState>(reducer, initialState: _initialState);
   runApp(MyApp(store: _store));
@@ -35,9 +34,9 @@ class _MyAppState extends State<MyApp> {
             return MaterialApp(
               debugShowCheckedModeBanner: false,
               theme: ThemeData(
-                fontFamily: 'DoHyeon',
-                primaryColor: Colors.white,
-              ),
+                  fontFamily: 'DoHyeon',
+                  primaryColor: Colors.white,
+                  primarySwatch: Colors.orange),
               home: UserPreferences().checkAuth ? HomeScreen() : SignInScreen(),
             );
           }),

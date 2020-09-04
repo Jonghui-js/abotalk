@@ -1,11 +1,9 @@
 import 'package:abotalk/screens/MyPage/MyCommentsScreen.dart';
 import 'package:abotalk/screens/MyPage/MyPostsScreen.dart';
 import 'package:abotalk/screens/MyPage/MySettingsScreen.dart';
-import 'package:abotalk/screens/Sign/SingInScreen.dart';
-import 'package:abotalk/services/user_preferences.dart';
+import 'package:abotalk/services/network_handler/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
-import 'package:abotalk/services/network_handler.dart';
 
 class MyPageScreen extends StatefulWidget {
   @override
@@ -19,7 +17,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
     MyCommentsScreen(),
     MySettingsScreen()
   ];
-  NetworkHandler networkHandler = NetworkHandler();
+  AuthNetworkHandler authNetworkHandler = AuthNetworkHandler();
 
   void _onItemTapped(int index) {
     setState(() {
@@ -35,29 +33,9 @@ class _MyPageScreenState extends State<MyPageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
         elevation: 1.0,
-        actions: [
-          IconButton(
-              icon: Icon(LineAwesomeIcons.sign_out),
-              onPressed: () async {
-                //로그아웃 기능
-                // prefer 바꾸기
-                var res = await networkHandler.logout('/auth/logout');
-                if (res['success']) {
-                  UserPreferences().checkAuth = false;
-                  UserPreferences().checkToken = '';
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (BuildContext context) {
-                        return SignInScreen();
-                      },
-                    ),
-                  );
-                }
-              })
-        ],
       ),
       body: IndexedStack(
         index: _selectedIndex,

@@ -1,15 +1,15 @@
 import 'package:abotalk/screens/Home/HomeScreen.dart';
-import 'package:abotalk/services/network_handler.dart';
+import 'package:abotalk/services/network_handler/post.dart';
 import 'package:flutter/material.dart';
 
-class FullScreenDialog extends StatefulWidget {
+class CreatePostDialog extends StatefulWidget {
   @override
-  _FullScreenDialogState createState() => new _FullScreenDialogState();
+  _CreatePostDialogState createState() => new _CreatePostDialogState();
 }
 
-class _FullScreenDialogState extends State<FullScreenDialog> {
+class _CreatePostDialogState extends State<CreatePostDialog> {
   final _globalKey = GlobalKey<FormState>();
-  NetworkHandler networkHandler = NetworkHandler();
+  PostNetworkHandler postNetworkHandler = PostNetworkHandler();
   TextEditingController _titleController = new TextEditingController();
   TextEditingController _contentController = new TextEditingController();
 
@@ -20,6 +20,7 @@ class _FullScreenDialogState extends State<FullScreenDialog> {
           title: Text("글 작성"),
         ),
         body: Padding(
+          padding: const EdgeInsets.all(20),
           child: Form(
             key: _globalKey,
             child: ListView(
@@ -75,8 +76,8 @@ class _FullScreenDialogState extends State<FullScreenDialog> {
                             "title": _titleController.text,
                             "content": _contentController.text
                           };
-                          var res =
-                              await networkHandler.createPost('/posts', data);
+                          var res = await postNetworkHandler.createPost(
+                              '/posts', data);
                           print(res);
                           Navigator.pushReplacement(
                             context,
@@ -95,7 +96,6 @@ class _FullScreenDialogState extends State<FullScreenDialog> {
               ],
             ),
           ),
-          padding: const EdgeInsets.all(20),
         ));
   }
 }

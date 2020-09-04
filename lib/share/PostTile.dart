@@ -3,7 +3,7 @@ import 'package:abotalk/model/Post.dart';
 import 'package:abotalk/redux/Actions.dart';
 import 'package:abotalk/redux/AppState.dart';
 import 'package:abotalk/screens/Post/PostScreen.dart';
-import 'package:abotalk/share/color.dart';
+import 'package:abotalk/share/UserTag.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
@@ -50,26 +50,11 @@ class PostTile extends StatelessWidget {
               );
             },
             child: Container(
-                margin: const EdgeInsets.symmetric(
-                    vertical: 10.0, horizontal: 15.0),
+                color: Colors.white,
+                margin: const EdgeInsets.only(
+                    top: 10, bottom: 5, left: 10, right: 10),
                 padding:
                     const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.grey.shade100,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.075),
-                      offset: Offset(10, 10),
-                      blurRadius: 10,
-                    ),
-                    BoxShadow(
-                      color: Colors.white,
-                      offset: Offset(-10, -10),
-                      blurRadius: 10,
-                    ),
-                  ],
-                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -88,40 +73,37 @@ class PostTile extends StatelessWidget {
                         ),
                         Row(
                           children: [
-                            DecoratedBox(
-                              decoration: BoxDecoration(
-                                  color: setUserColor(usertype),
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Container(
-                                padding: EdgeInsets.all(4),
-                                child: Text(
-                                  usertype.toUpperCase(),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
+                            UserTypeTag(
+                              userType: usertype,
                             ),
                             SizedBox(
                               width: 10,
                             ),
-                            Text(
-                              username,
-                              style: TextStyle(
-                                fontSize: 15,
-                              ),
-                            ),
+                            UserNameTag(
+                              userName: username,
+                            )
                           ],
                         ),
                       ],
                     ),
                     SizedBox(
-                      height: 12,
+                      height: 10,
                     ),
                     Text(
                       content,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          '댓글 ${comments.length}',
+                        ),
+                      ],
                     )
                   ],
                 )),
